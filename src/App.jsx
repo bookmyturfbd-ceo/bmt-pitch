@@ -43,20 +43,29 @@ const SLIDES = [
   SourcesSlide,
 ];
 
-// Slide transition variants
+// Slide transition variants — GPU-accelerated, no layout lag
 const variants = {
   enter: (direction) => ({
     x: direction > 0 ? '100%' : '-100%',
     opacity: 0,
+    scale: 0.98,
   }),
   center: {
     x: 0,
     opacity: 1,
+    scale: 1,
   },
   exit: (direction) => ({
     x: direction < 0 ? '100%' : '-100%',
     opacity: 0,
+    scale: 0.98,
   }),
+};
+
+const TRANSITION = {
+  x: { type: 'tween', ease: [0.25, 0.46, 0.45, 0.94], duration: 0.38 },
+  opacity: { duration: 0.25, ease: 'easeOut' },
+  scale: { duration: 0.38, ease: 'easeOut' },
 };
 
 const SIDEBAR_WIDTH = 220;
@@ -116,7 +125,7 @@ export default function App() {
           overflow: 'hidden',
         }}
       >
-        <AnimatePresence initial={false} custom={direction} mode="wait">
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <motion.div
             key={current}
             custom={direction}
@@ -124,15 +133,13 @@ export default function App() {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{
-              x: { type: 'spring', stiffness: 280, damping: 32 },
-              opacity: { duration: 0.25 },
-            }}
+            transition={TRANSITION}
             style={{
               position: 'absolute',
               inset: 0,
               width: '100%',
               height: '100%',
+              willChange: 'transform, opacity',
             }}
           >
             <SlideComponent financialState={financialState} setFinancialState={setFinancialState} />
