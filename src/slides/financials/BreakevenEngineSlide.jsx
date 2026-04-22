@@ -1,96 +1,84 @@
 import { useState, useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from 'recharts';
 
 export default function BreakevenEngineSlide({ financialState }) {
-  const [isAdjusted, setIsAdjusted] = useState(false);
-  const RAISE_AMOUNT = 2000000; // 20 Lakh
+  const [adjusted, setAdjusted] = useState(false);
+  const { turfs, bookingsPerDay, slotPrice, takeRate } = financialState;
 
-  // Calculate live revenue
-  const monthlyGMV = financialState.turfs * financialState.bookingsPerDay * financialState.slotPrice * 30;
-  const liveMonthlyRev = monthlyGMV * (financialState.takeRate / 100);
-  
-  // Adjusted is 25% conversion
-  const activeRev = isAdjusted ? liveMonthlyRev * 0.25 : liveMonthlyRev;
-  const liveBreakeven = RAISE_AMOUNT / activeRev;
+  const monthlyOpex = 76000;
+  const data = useMemo(() => {
+    return [
+      { label: 'Conservative', b: 3 },
+      { label: 'Base',         b: 5 },
+      { label: 'Aggressive',   b: 7 },
+      { label: '🔴 Live',      b: bookingsPerDay },
+    ].map(s => {
+      const rev = turfs * s.b * slotPrice * (takeRate / 100) * 30;
+      const eff = adjusted ? rev * 0.75 : rev;
+      const months = eff >= monthlyOpex ? '< 1 Month' : `${Math.ceil(monthlyOpex / eff)} Mo`;
+      return { name: s.label, rev: Math.round(eff), months: eff >= monthlyOpex ? 0.5 : Math.ceil(monthlyOpex / eff) };
+    });
+  }, [turfs, bookingsPerDay, slotPrice, takeRate, adjusted]);
 
-  const scenariosData = [
-    { name: 'Conservative (3/day)', pureRev: (40 * 3 * 2750 * 30 * 0.1), get rev() { return isAdjusted ? this.pureRev * 0.25 : this.pureRev; } },
-    { name: 'Base (5/day)', pureRev: (40 * 5 * 2750 * 30 * 0.1), get rev() { return isAdjusted ? this.pureRev * 0.25 : this.pureRev; } },
-    { name: 'Aggressive (7/day)', pureRev: (40 * 7 * 2750 * 30 * 0.1), get rev() { return isAdjusted ? this.pureRev * 0.25 : this.pureRev; } },
-  ].map(s => ({
-    name: s.name,
-    months: parseFloat((RAISE_AMOUNT / s.rev).toFixed(2)),
-  }));
-
-  // Add the live one
-  scenariosData.push({
-    name: 'Live Model',
-    months: parseFloat(liveBreakeven.toFixed(2)),
-    isLive: true
-  });
+  const liveRev   = turfs * bookingsPerDay * slotPrice * (takeRate / 100) * 30;
+  const effRev    = adjusted ? liveRev * 0.75 : liveRev;
+  const breakEven = effRev >= monthlyOpex ? '< 1 Month' : `${Math.ceil(monthlyOpex / effRev)} Months`;
 
   return (
-    <div className="w-full h-full flex flex-col p-12 overflow-y-auto styled-scrollbar">
-      <div className="mb-6 flex justify-between items-end">
-        <div>
-          <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: '32px', color: 'var(--white)', letterSpacing: '-0.02em' }}>Breakeven Engine</h2>
-          <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '4px' }}>Path to 20 Lakh Recovery</p>
-        </div>
-        
-        <div className="flex items-center gap-3 bg-[var(--ash-dark)] p-1 rounded-lg border border-[var(--border)]">
-          <button 
-            onClick={() => setIsAdjusted(false)}
-            className={`px-4 py-2 text-xs font-semibold rounded ${!isAdjusted ? 'bg-[var(--accent)] text-black' : 'text-[var(--white-muted)]'}`}
-          >
-            Pure Gross Model
-          </button>
-          <button 
-            onClick={() => setIsAdjusted(true)}
-            className={`px-4 py-2 text-xs font-semibold rounded ${isAdjusted ? 'bg-[var(--accent)] text-black' : 'text-[var(--white-muted)]'}`}
-          >
-            25% Adjusted Realism
+    <div className="slide-shell noise">
+      <div className="watermark" style={{ color: 'rgba(68,214,44,0.012)' }}>BREAKEVEN</div>
+
+      <div className="slide-inner">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <span className="slide-label">Raise & Financials — 06</span>
+            <h2 className="slide-title">Breakeven <span style={{ color: 'var(--accent)' }}>Engine.</span></h2>
+          </div>
+          <button onClick={() => setAdjusted(v => !v)} style={{ padding: '10px 20px', borderRadius: '8px', border: `1px solid ${adjusted ? 'var(--accent)' : 'var(--border)'}`, background: adjusted ? 'rgba(68,214,44,0.1)' : 'var(--ash-mid)', color: adjusted ? 'var(--accent)' : 'var(--white-muted)', fontFamily: 'Poppins', fontSize: '12px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}>
+            {adjusted ? '✓ 25% Realism Applied' : '⊘ Apply 25% Realism'}
           </button>
         </div>
-      </div>
 
-      <div className="flex gap-8 mb-8">
-        <div className="w-1/3 flex flex-col gap-6">
-          <div className="p-6 rounded-xl border flex flex-col justify-center items-center text-center relative overflow-hidden" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-            <h3 style={{ fontSize: '12px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Estimated Breakeven</h3>
-            <p style={{ fontSize: '48px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'mono', lineHeight: 1 }}>{liveBreakeven.toFixed(1)}</p>
-            <p style={{ fontSize: '14px', color: 'var(--white)', marginTop: '8px' }}>Months</p>
-            <p style={{ fontSize: '10px', color: 'var(--white-muted)', marginTop: '8px' }}>Based on live slider inputs</p>
+        <div style={{ display: 'flex', gap: '20px', flex: 1 }}>
+          {/* Chart */}
+          <div className="glass-panel" style={{ flex: 1.3, padding: '24px', display: 'flex', flexDirection: 'column' }}>
+            <h3 style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px' }}>Months to Breakeven Sensitivity</h3>
+            <div style={{ flex: 1 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                  <XAxis dataKey="name" tick={{ fill: '#666', fontSize: 12, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: '#666', fontSize: 11, fontFamily: 'Poppins' }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #252525', borderRadius: '8px' }} itemStyle={{ fontFamily: 'Poppins', fontSize: '12px' }} formatter={v => [`${v} months`, 'Time to Breakeven']} />
+                  <ReferenceLine y={1} stroke="var(--accent)" strokeDasharray="4 4" label={{ value: 'Target', fill: 'var(--accent)', fontSize: 11, fontFamily: 'Poppins' }} />
+                  <Bar dataKey="months" fill="var(--accent)" radius={[6,6,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-          
-          <div className="p-5 rounded-xl border bg-[rgba(68,214,44,0.05)] border-[var(--accent-dim)]">
-            <h4 style={{ fontSize: '12px', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px', fontWeight: 600 }}>Commercial Realism</h4>
-            <p style={{ fontSize: '13px', lineHeight: 1.5, color: 'var(--white)' }}>
-              {isAdjusted ? 
-                "Currently viewing real-world adjusted metrics. This assumes early months face churn, delays, inactive turfs, and operational frictions, realizing only 25% of gross projected GMV." : 
-                "Currently viewing pure gross metrics. Real commercial breakeven should be communicated as a multi-month path rather than a literal short-term recovery."}
-            </p>
-          </div>
-        </div>
 
-        <div className="w-2/3 p-6 rounded-xl border flex flex-col" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-          <h3 style={{ fontSize: '14px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>Breakeven Sensitivity (Months to Recover)</h3>
-          <div className="flex-1 w-full min-h-[250px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={scenariosData} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
-                <XAxis type="number" stroke="var(--white-muted)" fontSize={12} />
-                <YAxis dataKey="name" type="category" stroke="var(--white-muted)" fontSize={12} width={120} />
-                <RechartsTooltip 
-                  cursor={{fill: 'rgba(255,255,255,0.05)'}}
-                  contentStyle={{ backgroundColor: 'var(--black)', borderColor: 'var(--border)', color: 'var(--white)', fontSize: '12px' }}
-                  formatter={(value) => [`${value} Months`, 'Breakeven']}
-                />
-                <Bar dataKey="months" radius={[0, 4, 4, 0]}>
-                  {scenariosData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.isLive ? 'var(--accent)' : 'var(--ash-light)'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          {/* Right panel */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div className="glass-panel-accent" style={{ padding: '24px' }}>
+              <p style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px' }}>
+                {adjusted ? 'Adjusted (75%)' : 'Gross'} — Live Inputs
+              </p>
+              <p style={{ fontSize: '40px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'monospace' }}>{breakEven}</p>
+              <p style={{ fontSize: '12px', color: 'var(--white-muted)', marginTop: '6px' }}>
+                Monthly Revenue: ৳{Math.round(effRev).toLocaleString()} vs OpEx: ৳{monthlyOpex.toLocaleString()}
+              </p>
+            </div>
+
+            {[
+              { title: 'OpEx Assumption', body: 'BDT 76,000/month in Phase 1. Covers 3 C-Suite at ৳20K, 1 HOD at ৳10K, 1 Field Ops at ৳6K.' },
+              { title: 'Realism Toggle', body: 'The 25% haircut models early churn, partial adoption, and payment friction. Useful for investor sensitivity testing.' },
+              { title: 'Capital Buffer', body: 'BDT 6.5L in reserve extends the breakeven window by 8+ months even in a conservative scenario.' },
+            ].map((item, i) => (
+              <div key={i} className="glass-panel" style={{ padding: '18px 20px' }}>
+                <h4 style={{ fontSize: '13px', color: 'var(--white)', fontWeight: 600, marginBottom: '6px' }}>{item.title}</h4>
+                <p style={{ fontSize: '12px', color: 'var(--white-muted)', lineHeight: 1.55 }}>{item.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -1,111 +1,85 @@
 import { useState } from 'react';
 
 export default function TournamentEconomicsSlide() {
-  const [isPremiumBuyIn, setIsPremiumBuyIn] = useState(false);
+  const [buyIn, setBuyIn] = useState(2000);
 
-  const costs = [
-    { item: 'Venue Hire', amount: 25000 },
-    { item: 'Referees', amount: 4000 },
-    { item: 'Trophies / Medals', amount: 15000 },
-    { item: 'Branding / Banners', amount: 8000 },
-    { item: 'Logistics / Refreshments', amount: 5000 },
-    { item: 'Social Media Coverage', amount: 5000 },
-    { item: 'Flyers / Invitations', amount: 5000 },
-    { item: 'Contingency', amount: 5000 },
-  ];
-
-  const grossCost = costs.reduce((acc, curr) => acc + curr.amount, 0);
-  const TEAMS = 32;
-  const buyInPerTeam = isPremiumBuyIn ? 3500 : 2000;
-  const recovered = TEAMS * buyInPerTeam;
-  const netMargin = recovered - grossCost;
+  const teams = 8, players = 11;
+  const totalBuyIn = teams * players * buyIn;
+  const opsCost = 50000;
+  const refCost = 5000;
+  const totalCost = opsCost + refCost;
+  const net = totalBuyIn - totalCost;
 
   return (
-    <div className="w-full h-full flex flex-col p-12 overflow-y-auto styled-scrollbar">
-      <div className="mb-6 flex justify-between items-end">
-        <div>
-          <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: '32px', color: 'var(--white)', letterSpacing: '-0.02em' }}>Tournament Economics</h2>
-          <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '4px' }}>Growth & Monetization Events</p>
-        </div>
-        
-        <div className="flex items-center bg-[var(--ash-dark)] rounded-lg p-1 border border-[var(--border)]">
-          <button 
-            onClick={() => setIsPremiumBuyIn(false)}
-            className={`px-4 py-2 text-xs font-semibold rounded ${!isPremiumBuyIn ? 'bg-[var(--accent)] text-black' : 'text-[var(--white-muted)]'}`}
-          >
-            BDT 2,000 Buy-In
-          </button>
-          <button 
-            onClick={() => setIsPremiumBuyIn(true)}
-            className={`px-4 py-2 text-xs font-semibold rounded ${isPremiumBuyIn ? 'bg-[var(--accent)] text-black' : 'text-[var(--white-muted)]'}`}
-          >
-            BDT 3,500 Buy-In
-          </button>
-        </div>
-      </div>
+    <div className="slide-shell noise">
+      <div className="watermark" style={{ color: 'rgba(68,214,44,0.012)' }}>TOURNAMENT</div>
 
-      <div className="flex gap-8 flex-1">
-        {/* Cost Breakdown */}
-        <div className="w-1/2 p-6 rounded-xl border flex flex-col" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-          <h3 style={{ fontSize: '14px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>Launch Event Cost Profile</h3>
-          
-          <div className="flex-1 overflow-hidden">
-            <table className="w-full text-sm">
+      <div className="slide-inner">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <span className="slide-label">Raise & Financials — 07</span>
+            <h2 className="slide-title">Tournament <span style={{ color: 'var(--accent)' }}>Economics.</span></h2>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', background: 'var(--ash-mid)', borderRadius: '10px', padding: '4px', border: '1px solid var(--border)' }}>
+            {[2000, 3500].map(v => (
+              <button key={v} onClick={() => setBuyIn(v)} style={{ padding: '8px 18px', borderRadius: '7px', border: 'none', cursor: 'pointer', fontFamily: 'Poppins', fontSize: '12px', fontWeight: 600, background: buyIn === v ? 'var(--accent)' : 'transparent', color: buyIn === v ? 'var(--black)' : 'var(--white-muted)', transition: 'all 0.2s' }}>
+                ৳{v.toLocaleString()} Buy-in
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '20px', flex: 1 }}>
+          {/* P&L card */}
+          <div className="glass-panel" style={{ flex: 1, padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <h3 style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Tournament P&L — 8 Teams · 11 Players</h3>
+            <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
               <tbody>
-                {costs.map((c, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    <td className="py-3 text-[var(--white)]">{c.item}</td>
-                    <td className="py-3 text-right font-mono text-[var(--white-muted)]">BDT {c.amount.toLocaleString()}</td>
+                {[
+                  { label: 'Total Buy-in Collected', value: `৳${totalBuyIn.toLocaleString()}`, accent: true },
+                  { label: 'Turf Rental (2 days)', value: `−৳${opsCost.toLocaleString()}` },
+                  { label: 'Referees & Staff',       value: `−৳${refCost.toLocaleString()}` },
+                ].map((r, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <td style={{ padding: '14px 0', color: 'var(--white)' }}>{r.label}</td>
+                    <td style={{ padding: '14px 0', textAlign: 'right', color: r.accent ? 'var(--accent)' : 'var(--white-muted)', fontFamily: 'monospace', fontWeight: r.accent ? 700 : 400 }}>{r.value}</td>
                   </tr>
                 ))}
-                <tr style={{ borderTop: '1px solid var(--border)' }}>
-                  <td className="py-4 text-[var(--white)] font-bold">Gross Cost</td>
-                  <td className="py-4 text-right font-mono font-bold text-[var(--white)]">BDT {grossCost.toLocaleString()}</td>
+                <tr style={{ background: net >= 0 ? 'rgba(68,214,44,0.06)' : 'rgba(255,59,59,0.06)', borderRadius: '8px' }}>
+                  <td style={{ padding: '18px 0', color: 'var(--white)', fontWeight: 700, fontSize: '16px' }}>Net Tournament Margin</td>
+                  <td style={{ padding: '18px 0', textAlign: 'right', fontFamily: 'monospace', fontWeight: 800, fontSize: '24px', color: net >= 0 ? 'var(--accent)' : 'var(--red-accent)' }}>
+                    {net >= 0 ? '+' : ''}৳{net.toLocaleString()}
+                  </td>
                 </tr>
               </tbody>
             </table>
-          </div>
-        </div>
 
-        {/* Buy-In Model & Narrative */}
-        <div className="w-1/2 flex flex-col gap-6">
-          <div className="p-6 rounded-xl border relative" style={{ background: netMargin >= 0 ? 'rgba(68,214,44,0.05)' : 'var(--ash-dark)', borderColor: netMargin >= 0 ? 'var(--accent-dim)' : 'var(--border)' }}>
-            <h3 style={{ fontSize: '14px', color: 'var(--white)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>Recovery Model</h3>
-            
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-[var(--white-muted)] text-sm">Teams Participating</span>
-              <span className="font-mono text-[var(--white)] font-bold text-lg">{TEAMS}</span>
+            <div style={{ padding: '14px', background: net >= 0 ? 'rgba(68,214,44,0.06)' : 'rgba(255,59,59,0.06)', borderRadius: '8px', border: `1px solid ${net >= 0 ? 'rgba(68,214,44,0.2)' : 'rgba(255,59,59,0.2)'}` }}>
+              <p style={{ fontSize: '13px', color: net >= 0 ? 'var(--accent)' : 'var(--red-accent)', fontWeight: 600, marginBottom: '4px' }}>
+                {net >= 0 ? '✓ Net Positive — Self-Funding Event' : '⚠ Net Negative — Community Building Play'}
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--white-muted)' }}>
+                {net >= 0 ? 'At ৳3,500 buy-in, tournaments become a profit centre on top of the engagement flywheel.' : 'At ৳2,000 buy-in, the event runs at a cost to BMT. Justified by virality, MMR activations, and brand exposure.'}
+              </p>
             </div>
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-[var(--white-muted)] text-sm">Buy-In per Team</span>
-              <span className="font-mono text-[var(--accent)] text-lg font-bold">BDT {buyInPerTeam.toLocaleString()}</span>
-            </div>
-            
-            <div className="w-full h-[1px] bg-[var(--border)] my-4"></div>
-            
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-[var(--white-muted)] text-sm uppercase">Total Recovered</span>
-              <span className="font-mono text-[var(--white)] text-xl font-bold">BDT {recovered.toLocaleString()}</span>
-            </div>
-            
-            <div className="flex justify-between items-center p-4 rounded-lg bg-[var(--black)] border border-[var(--border)]">
-              <span className="text-[var(--white)] text-sm font-bold uppercase">{netMargin >= 0 ? 'Net Margin' : 'Net Event Cost'}</span>
-              <span className="font-mono text-2xl font-bold" style={{ color: netMargin >= 0 ? 'var(--accent)' : 'var(--ash-light)' }}>
-                {netMargin >= 0 ? '+' : ''}BDT {Math.abs(netMargin).toLocaleString()}
-              </span>
-            </div>
-            
-            {netMargin >= 0 && (
-              <p className="text-xs text-[var(--accent)] mt-3 text-center">Positive event margin before prize pool scaling.</p>
-            )}
           </div>
 
-          <div className="p-6 rounded-xl border relative overflow-hidden" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--white-muted)' }} />
-            <h3 style={{ fontSize: '14px', color: 'var(--white)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Strategic Value</h3>
-            <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--white-muted)' }}>
-              Tournaments act as both a <strong className="text-[var(--white)]">growth channel</strong> and a <strong className="text-[var(--white)]">monetization mechanism</strong>. They strengthen platform retention and build deep community identity. Economics improve significantly when corporate sponsorships or scaling entry fees are introduced later.
-            </p>
+          {/* Strategic Value */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {[
+              { emoji: '🏆', title: 'Virality Engine', body: 'Tournaments drive the highest organic word-of-mouth. A 64-player event means 64 active BMT app users bringing squad members to sign up.' },
+              { emoji: '📈', title: 'MMR Catalyst', body: 'Every competitive match creates rating changes, pushes users up leaderboards, and creates a reason to play the following week.' },
+              { emoji: '💰', title: 'Future Revenue', body: 'Brand sponsorships, banner ads, streaming rights, and official BMT merchandise sales all attach naturally to organized events.' },
+              { emoji: '📊', title: 'Scalable Format', body: '8-team brackets can grow to 16, 32-team city leagues. Each season can be co-branded with sports companies, energy drinks, or sports academies.' },
+            ].map((item, i) => (
+              <div key={i} className="glass-panel" style={{ padding: '18px 20px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '24px', lineHeight: 1, flexShrink: 0 }}>{item.emoji}</span>
+                <div>
+                  <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--white)', marginBottom: '5px' }}>{item.title}</h4>
+                  <p style={{ fontSize: '12px', color: 'var(--white-muted)', lineHeight: 1.55 }}>{item.body}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

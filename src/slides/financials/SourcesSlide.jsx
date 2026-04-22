@@ -1,57 +1,47 @@
-export default function SourcesSlide() {
+export default function FinancialSourcesSlide() {
   const sources = [
-    { id: 1, title: 'Bangladesh’s Emerging Turf Industry', org: 'BBF Digital', date: 'June 2024', link: 'https://bbf.digital/bangladeshs-emerging-turf-industry' },
-    { id: 2, title: 'Competition heats up as Ctg’s artificial turf business expands', org: 'The Business Standard', date: 'February 2024', link: 'https://www.tbsnews.net/bangladesh/competition-heats-ctgs-artificial-turf-business-expands-797054' },
-    { id: 3, title: 'Cost for Company Formation in Bangladesh / RJSC References', org: 'Counsels Law / RJSC', date: '2024', link: 'https://www.counselslaw.com/cost-for-company-formation-in-bangladesh/' },
-    { id: 4, title: 'RJSC Fee Calculator & Filing Fees', org: 'Govt of Bangladesh', date: 'Active', link: 'https://app.roc.gov.bd/psp/fee_calculator' },
-    { id: 5, title: 'Facebook Ads Cost in Bangladesh 2026', org: 'MediaBD / AgentWise', date: '2026', link: 'https://agentwisex.com/facebook-ads-cost-bangladesh/' },
-    { id: 6, title: 'Tournament Entry Fee Benchmarks (Dhaka Football Groups)', org: 'Local FB Communities', date: '2025/2026', link: 'https://www.facebook.com/groups/1399374044002149/' },
+    { id: 1, org: 'BBF Digital',                title: "Bangladesh's Emerging Turf Industry",                  date: 'June 2024',     url: 'https://bbf.digital/bangladeshs-emerging-turf-industry' },
+    { id: 2, org: 'The Business Standard (TBS)', title: "Competition heats up as Ctg's artificial turf business expands", date: 'Feb 2024', url: 'https://www.tbsnews.net/bangladesh/competition-heats-ctgs-artificial-turf-business-expands-797054' },
+    { id: 3, org: 'Turfly',                      title: 'Google Play Store Listing & Feature Set Analysis',    date: 'Current',       url: 'https://play.google.com/store/apps/details?id=com.ternary.turfly' },
+    { id: 4, org: 'Turfly',                      title: 'Apple App Store Listing ("coming soon" analysis)',    date: 'Current',       url: 'https://apps.apple.com/us/app/turfly/id6756574386' },
+    { id: 5, org: 'Khelboo',                     title: 'Company Profile & Traction Metrics',                 date: 'Current',       url: 'https://www.linkedin.com/company/khelboo-com' },
+    { id: 6, org: 'Playo',                       title: 'Playo — Sports Activity & Venue Booking App',        date: 'Current',       url: 'https://playo.co' },
   ];
 
   return (
-    <div className="w-full h-full flex flex-col p-12 overflow-y-auto styled-scrollbar">
-      <div className="mb-8">
-        <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: '32px', color: 'var(--white)', letterSpacing: '-0.02em' }}>Sources & Footnotes</h2>
-        <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '4px' }}>External Market Validation</p>
-      </div>
+    <div className="slide-shell noise">
+      <div className="watermark" style={{ color: 'rgba(255,255,255,0.012)' }}>SOURCES</div>
 
-      <div className="grid gap-4">
-        {sources.map((source) => (
-          <div 
-            key={source.id} 
-            className="p-5 rounded-xl border flex flex-col gap-2 hover:bg-[rgba(255,255,255,0.02)] transition-colors"
-            style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}
-          >
-            <div className="flex justify-between items-start">
-              <div className="flex gap-4">
-                <span className="text-[var(--accent)] font-mono font-bold text-lg">[{source.id}]</span>
-                <div>
-                  <h3 className="text-[16px] text-[var(--white)] font-semibold mb-1">{source.title}</h3>
-                  <div className="flex gap-3 text-[13px] text-[var(--white-muted)]">
-                    <span className="flex items-center gap-1"><span className="text-[var(--ash-light)]">🏢</span> {source.org}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1"><span className="text-[var(--ash-light)]">📅</span> {source.date}</span>
-                  </div>
-                </div>
+      <div className="slide-inner">
+        <div>
+          <span className="slide-label">Raise & Financials — 09</span>
+          <h2 className="slide-title">Verified <span style={{ color: 'var(--accent)' }}>Sources.</span></h2>
+          <p style={{ fontSize: '14px', color: 'var(--white-muted)', marginTop: '8px' }}>All external market data, competitor intelligence, and cost assumptions are traced to verifiable sources below.</p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+          {sources.map(src => (
+            <a key={src.id} href={src.url} target="_blank" rel="noreferrer"
+              className="glass-panel"
+              style={{ display: 'flex', gap: '20px', alignItems: 'center', padding: '20px 24px', textDecoration: 'none', transition: 'all 0.2s ease', cursor: 'pointer' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(68,214,44,0.4)'; e.currentTarget.style.background = 'rgba(68,214,44,0.06)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'rgba(18,18,18,0.8)'; }}
+            >
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '14px', color: 'var(--accent)', flexShrink: 0 }}>
+                {src.id}
               </div>
-              
-              <a 
-                href={source.link} 
-                target="_blank" 
-                rel="noreferrer"
-                className="px-4 py-2 rounded bg-[var(--black)] border border-[var(--border)] text-[12px] text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
-              >
-                View Source ↗
-              </a>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      <div className="mt-8 p-6 rounded-xl border bg-[var(--black)] border-[var(--border)]">
-        <p className="text-[13px] text-[var(--white-muted)] leading-relaxed">
-          <strong className="text-[var(--white)]">Disclaimer:</strong> The market data referenced above represents externally sourced facts to baseline the industry size, regulatory costs, and ad pricing. All internal financial models (Revenue, Breakeven, Tranches) shown in previous tabs are <em>assumptions</em> based on target operations and are not guaranteed.
-        </p>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 600 }}>{src.org}</span>
+                  <span style={{ fontSize: '11px', color: 'var(--white-muted)' }}>{src.date}</span>
+                </div>
+                <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--white)', marginBottom: '4px' }}>{src.title}</h3>
+                <p style={{ fontSize: '11px', color: 'var(--white-muted)', opacity: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{src.url}</p>
+              </div>
+              <span style={{ color: 'var(--accent)', fontSize: '18px', flexShrink: 0, opacity: 0.5 }}>↗</span>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );

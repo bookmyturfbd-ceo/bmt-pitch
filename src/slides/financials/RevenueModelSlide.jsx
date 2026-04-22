@@ -1,115 +1,104 @@
 import { useMemo } from 'react';
 
 export default function RevenueModelSlide({ financialState, setFinancialState }) {
-  // Scenario calculations
-  const calculateMetrics = (turfs, bookings, slot, rate) => {
-    const monthlyGMV = turfs * bookings * slot * 30;
-    const monthlyRev = monthlyGMV * (rate / 100);
-    const annualRev = monthlyRev * 12;
-    return { monthlyGMV, monthlyRev, annualRev };
-  };
+  const { turfs, bookingsPerDay, slotPrice, takeRate } = financialState;
 
-  const currentMetrics = useMemo(() => 
-    calculateMetrics(financialState.turfs, financialState.bookingsPerDay, financialState.slotPrice, financialState.takeRate),
-  [financialState]);
+  const live = useMemo(() => {
+    const gmv = turfs * bookingsPerDay * slotPrice * 30;
+    const rev = gmv * (takeRate / 100);
+    return { gmv, rev, ann: rev * 12 };
+  }, [turfs, bookingsPerDay, slotPrice, takeRate]);
 
-  const baseMetrics = calculateMetrics(40, 5, 2750, 10);
-  const consMetrics = calculateMetrics(40, 3, 2750, 10);
-  const aggMetrics = calculateMetrics(40, 7, 2750, 10);
+  const fmt = v => `৳${(v / 100000).toFixed(2)}L`;
 
-  const handleSliderChange = (e, key) => {
-    setFinancialState(prev => ({ ...prev, [key]: Number(e.target.value) }));
-  };
+  const benchmarks = [
+    { name: 'Conservative', b: 3,  gmv: 40*3*2750*30, rev: 40*3*2750*30*0.1 },
+    { name: 'Base',         b: 5,  gmv: 40*5*2750*30, rev: 40*5*2750*30*0.1 },
+    { name: 'Aggressive',   b: 7,  gmv: 40*7*2750*30, rev: 40*7*2750*30*0.1 },
+  ];
 
-  const formatBDT = (val) => `BDT ${(val / 100000).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}L`;
+  const sliders = [
+    { label: 'Turfs Onboarded',       key: 'turfs',          min: 10,   max: 80,   step: 1,   val: turfs,          unit: '' },
+    { label: 'Avg Bookings/Day/Turf', key: 'bookingsPerDay', min: 1,    max: 10,   step: 0.5, val: bookingsPerDay, unit: '' },
+    { label: 'Avg Slot Price (BDT)',  key: 'slotPrice',      min: 1500, max: 3500, step: 50,  val: slotPrice,      unit: ' ৳' },
+    { label: 'Platform Take Rate',    key: 'takeRate',        min: 5,    max: 15,   step: 0.5, val: takeRate,       unit: '%' },
+  ];
 
   return (
-    <div className="w-full h-full flex flex-col p-12 overflow-y-auto styled-scrollbar">
-      <div className="mb-6">
-        <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: '32px', color: 'var(--white)', letterSpacing: '-0.02em' }}>Revenue Model</h2>
-        <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '4px' }}>Interactive Assumption Engine</p>
-      </div>
+    <div className="slide-shell noise">
+      <div className="watermark" style={{ color: 'rgba(68,214,44,0.012)' }}>REVENUE</div>
 
-      <div className="p-4 mb-6 rounded-lg flex items-center gap-3 border border-[var(--accent-dim)] bg-[rgba(68,214,44,0.05)] text-sm text-[var(--white)]">
-        <span className="text-[var(--accent)]">⚠️</span>
-        <strong>Internal Model Assumption:</strong> The following are raw platform gross projections, not external market facts. Real-world dynamics will apply friction.
-      </div>
+      <div className="slide-inner">
+        <div>
+          <span className="slide-label">Raise & Financials — 05</span>
+          <h2 className="slide-title">Revenue <span style={{ color: 'var(--accent)' }}>Model.</span></h2>
+        </div>
 
-      <div className="flex gap-8 mb-8">
-        {/* Sliders */}
-        <div className="flex-1 p-6 rounded-xl border flex flex-col gap-6" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-          <h3 style={{ fontSize: '14px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Control Panel</h3>
-          
-          {[
-            { label: 'Turfs Onboarded', key: 'turfs', min: 10, max: 80, step: 1, val: financialState.turfs, unit: '' },
-            { label: 'Avg Bookings/Day/Turf', key: 'bookingsPerDay', min: 1, max: 10, step: 0.5, val: financialState.bookingsPerDay, unit: '' },
-            { label: 'Avg Slot Price (BDT)', key: 'slotPrice', min: 1500, max: 3500, step: 50, val: financialState.slotPrice, unit: ' ৳' },
-            { label: 'Platform Take Rate', key: 'takeRate', min: 5, max: 15, step: 0.5, val: financialState.takeRate, unit: '%' },
-          ].map((slider) => (
-            <div key={slider.key}>
-              <div className="flex justify-between mb-2">
-                <label className="text-sm text-[var(--white)]">{slider.label}</label>
-                <span className="text-sm font-mono text-[var(--accent)]">{slider.val}{slider.unit}</span>
+        <div className="glass-panel" style={{ padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center', fontSize: '13px' }}>
+          <span style={{ color: 'var(--accent)', fontSize: '16px' }}>⚠</span>
+          <span style={{ color: 'var(--white-muted)' }}><strong style={{ color: 'var(--white)' }}>Internal Model Assumption:</strong> These are raw gross projections. Real-world dynamics (churn, friction, ramp-up) will apply.</span>
+        </div>
+
+        <div style={{ display: 'flex', gap: '20px', flex: 1 }}>
+          {/* Sliders */}
+          <div className="glass-panel" style={{ flex: 1, padding: '28px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <h3 style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Live Control Panel</h3>
+            {sliders.map(s => (
+              <div key={s.key}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <label style={{ fontSize: '13px', color: 'var(--white)' }}>{s.label}</label>
+                  <span style={{ fontSize: '14px', fontFamily: 'monospace', color: 'var(--accent)', fontWeight: 600 }}>{s.val}{s.unit}</span>
+                </div>
+                <input type="range" min={s.min} max={s.max} step={s.step} value={s.val}
+                  onChange={e => setFinancialState(p => ({ ...p, [s.key]: Number(e.target.value) }))} />
               </div>
-              <input
-                type="range"
-                min={slider.min}
-                max={slider.max}
-                step={slider.step}
-                value={slider.val}
-                onChange={(e) => handleSliderChange(e, slider.key)}
-                className="w-full accent-[var(--accent)]"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Live Output */}
-        <div className="flex-1 grid grid-cols-2 gap-4">
-          <div className="col-span-2 p-6 rounded-xl border" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-            <p className="text-[12px] text-[var(--white-muted)] uppercase tracking-wider mb-2">Live Monthly GMV</p>
-            <p className="text-3xl font-mono text-[var(--white)]">{formatBDT(currentMetrics.monthlyGMV)}</p>
-          </div>
-          <div className="p-6 rounded-xl border" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-            <p className="text-[12px] text-[var(--white-muted)] uppercase tracking-wider mb-2">Live Monthly Rev</p>
-            <p className="text-2xl font-mono text-[var(--accent)]">{formatBDT(currentMetrics.monthlyRev)}</p>
-          </div>
-          <div className="p-6 rounded-xl border" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-            <p className="text-[12px] text-[var(--white-muted)] uppercase tracking-wider mb-2">Live Annual Rev</p>
-            <p className="text-2xl font-mono text-[var(--accent)]">{formatBDT(currentMetrics.annualRev)}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Static Scenario Table */}
-      <div className="p-6 rounded-xl border" style={{ background: 'var(--black)', borderColor: 'var(--border)' }}>
-        <h3 style={{ fontSize: '14px', color: 'var(--white)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>Baseline Benchmarks (40 Turfs, 2750 Slot, 10% Take)</h3>
-        <table className="w-full text-sm">
-          <thead>
-            <tr style={{ borderBottom: '1px solid var(--border)' }}>
-              <th className="text-left pb-3 font-medium text-[var(--white-muted)]">Scenario</th>
-              <th className="text-right pb-3 font-medium text-[var(--white-muted)]">Bookings/Day</th>
-              <th className="text-right pb-3 font-medium text-[var(--white-muted)]">Monthly GMV</th>
-              <th className="text-right pb-3 font-medium text-[var(--white-muted)]">Monthly Rev</th>
-              <th className="text-right pb-3 font-medium text-[var(--white-muted)]">Annual Rev</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              { name: 'Conservative', bookings: 3, gmv: formatBDT(consMetrics.monthlyGMV), rev: formatBDT(consMetrics.monthlyRev), ann: formatBDT(consMetrics.annualRev) },
-              { name: 'Base', bookings: 5, gmv: formatBDT(baseMetrics.monthlyGMV), rev: formatBDT(baseMetrics.monthlyRev), ann: formatBDT(baseMetrics.annualRev), highlight: true },
-              { name: 'Aggressive', bookings: 7, gmv: formatBDT(aggMetrics.monthlyGMV), rev: formatBDT(aggMetrics.monthlyRev), ann: formatBDT(aggMetrics.annualRev) },
-            ].map((row, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: row.highlight ? 'rgba(68,214,44,0.05)' : 'transparent' }}>
-                <td className="py-3 text-[var(--white)] font-medium">{row.name}</td>
-                <td className="py-3 text-right text-[var(--white)]">{row.bookings}</td>
-                <td className="py-3 text-right text-[var(--white)] font-mono">{row.gmv}</td>
-                <td className="py-3 text-right text-[var(--accent)] font-mono">{row.rev}</td>
-                <td className="py-3 text-right text-[var(--accent)] font-mono">{row.ann}</td>
-              </tr>
             ))}
-          </tbody>
-        </table>
+          </div>
+
+          {/* Live output */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div className="glass-panel-accent" style={{ padding: '28px' }}>
+              <p style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Live Monthly GMV</p>
+              <p style={{ fontSize: '36px', fontWeight: 700, fontFamily: 'monospace', color: 'var(--white)' }}>{fmt(live.gmv)}</p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', flex: 1 }}>
+              {[
+                { label: 'Monthly Platform Revenue', value: fmt(live.rev) },
+                { label: 'Annualised Revenue',       value: fmt(live.ann) },
+              ].map((k, i) => (
+                <div key={i} className="glass-panel" style={{ padding: '22px' }}>
+                  <p style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>{k.label}</p>
+                  <p style={{ fontSize: '26px', fontWeight: 700, fontFamily: 'monospace', color: 'var(--accent)' }}>{k.value}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Benchmark table */}
+            <div className="glass-panel" style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px' }}>Benchmarks (40 Turfs · ৳2,750 · 10%)</h3>
+              <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                    {['Scenario', 'Bkgs/Day', 'Monthly GMV', 'Monthly Rev', 'Annual Rev'].map(h => (
+                      <th key={h} style={{ textAlign: h === 'Scenario' ? 'left' : 'right', paddingBottom: '8px', color: 'var(--white-muted)', fontWeight: 500 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {benchmarks.map((r, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: i === 1 ? 'rgba(68,214,44,0.04)' : 'transparent' }}>
+                      <td style={{ padding: '9px 0', color: 'var(--white)', fontWeight: i === 1 ? 600 : 400 }}>{r.name}</td>
+                      <td style={{ padding: '9px 0', textAlign: 'right', color: 'var(--white)' }}>{r.b}</td>
+                      <td style={{ padding: '9px 0', textAlign: 'right', fontFamily: 'monospace', color: 'var(--white-muted)' }}>{fmt(r.gmv)}</td>
+                      <td style={{ padding: '9px 0', textAlign: 'right', fontFamily: 'monospace', color: 'var(--accent)' }}>{fmt(r.rev)}</td>
+                      <td style={{ padding: '9px 0', textAlign: 'right', fontFamily: 'monospace', color: 'var(--accent)' }}>{fmt(r.rev * 12)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

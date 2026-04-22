@@ -1,129 +1,103 @@
 import { useState } from 'react';
 
-export default function TranchePlanSlide() {
-  const [activeOption, setActiveOption] = useState('A');
+const OPTIONS = {
+  A: {
+    label: 'Option A — Recommended',
+    tranches: [
+      { t: 'Tranche 1', amount: 'BDT 4 Lakh', trigger: 'At Signing', use: 'Legal setup, 2 months payroll, field onboarding, launch materials + ads test', risk: 'Proves operational readiness' },
+      { t: 'Tranche 2', amount: 'BDT 6 Lakh', trigger: '20 Turfs + Public App + 300 MAU', use: 'Accelerated marketing, mid-stage payroll', risk: 'Proves initial product-market fit' },
+      { t: 'Tranche 3', amount: 'BDT 10 Lakh', trigger: '40 Turfs + 1000 MAU + 1 Tournament', use: 'Scale, Phase 2 salaries, reserve buffer', risk: 'Proves repeatable growth engine' },
+    ],
+  },
+  B: {
+    label: 'Option B — Stricter Control',
+    tranches: [
+      { t: 'Tranche 1', amount: 'BDT 3 Lakh',  trigger: 'At Signing',   use: 'Legal & setup only', risk: 'Minimal capital at risk' },
+      { t: 'Tranche 2', amount: 'BDT 4 Lakh',  trigger: 'App Launch',   use: 'Initial marketing',  risk: 'Verifies tech delivery' },
+      { t: 'Tranche 3', amount: 'BDT 5 Lakh',  trigger: '20 Turfs',     use: 'Sustained ops',      risk: 'Verifies supply acquisition' },
+      { t: 'Tranche 4', amount: 'BDT 8 Lakh',  trigger: '40 Turfs',     use: 'Growth & reserves',  risk: 'Scale capital' },
+    ],
+  },
+  C: {
+    label: 'Option C — Founder Friendly',
+    tranches: [
+      { t: 'Tranche 1', amount: 'BDT 7 Lakh',  trigger: 'At Signing',           use: 'First 6 months full ops & marketing', risk: 'Higher upfront trust' },
+      { t: 'Tranche 2', amount: 'BDT 13 Lakh', trigger: '40 Turfs or Month 6',  use: 'Phase 2 & Strategic Reserve',         risk: 'Smooth operations' },
+    ],
+  },
+};
 
-  const options = {
-    A: {
-      name: 'Option A (Recommended)',
-      tranches: [
-        { title: 'Tranche 1', amount: 'BDT 4 Lakh', trigger: 'At Signing', use: 'Legal setup, first 2 mos payroll, field onboarding, launch ads', risk: 'Proves operational readiness' },
-        { title: 'Tranche 2', amount: 'BDT 6 Lakh', trigger: '20 Turfs + Public App + 300 MAU', use: 'Accelerated marketing, mid-stage payroll', risk: 'Proves initial product-market fit' },
-        { title: 'Tranche 3', amount: 'BDT 10 Lakh', trigger: '40 Turfs + 1000 MAU + 1 Tournament', use: 'Scaling, Phase 2 salaries, buffer', risk: 'Proves repeatable growth engine' }
-      ]
-    },
-    B: {
-      name: 'Option B (Stricter Control)',
-      tranches: [
-        { title: 'Tranche 1', amount: 'BDT 3 Lakh', trigger: 'At Signing', use: 'Legal & setup only', risk: 'Minimal capital at risk' },
-        { title: 'Tranche 2', amount: 'BDT 4 Lakh', trigger: 'App Launch', use: 'Initial marketing blast', risk: 'Verifies tech delivery' },
-        { title: 'Tranche 3', amount: 'BDT 5 Lakh', trigger: '20 Turfs', use: 'Sustained operations', risk: 'Verifies supply acquisition' },
-        { title: 'Tranche 4', amount: 'BDT 8 Lakh', trigger: '40 Turfs', use: 'Growth and reserves', risk: 'Scale capital' }
-      ]
-    },
-    C: {
-      name: 'Option C (Founder Friendly)',
-      tranches: [
-        { title: 'Tranche 1', amount: 'BDT 7 Lakh', trigger: 'At Signing', use: 'First 6 months full ops & marketing', risk: 'Higher upfront trust' },
-        { title: 'Tranche 2', amount: 'BDT 13 Lakh', trigger: '40 Turfs or Month 6', use: 'Phase 2 & Strategic Reserve', risk: 'Smooth operations' }
-      ]
-    }
-  };
+export default function TranchePlanSlide() {
+  const [active, setActive] = useState('A');
+  const opt = OPTIONS[active];
 
   return (
-    <div className="w-full h-full flex flex-col p-12 overflow-y-auto styled-scrollbar">
-      <div className="mb-6 flex justify-between items-end">
-        <div>
-          <h2 style={{
-            fontFamily: 'Poppins, sans-serif',
-            fontWeight: 700,
-            fontSize: '32px',
-            color: 'var(--white)',
-            letterSpacing: '-0.02em',
-          }}>Tranche Plan</h2>
-          <p style={{
-            fontFamily: 'Poppins, sans-serif',
-            fontSize: '14px',
-            color: 'var(--accent)',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            marginTop: '4px',
-          }}>Derisking Investor Capital</p>
-        </div>
-        
-        <div className="flex gap-2">
-          {['A', 'B', 'C'].map(opt => (
-            <button
-              key={opt}
-              onClick={() => setActiveOption(opt)}
-              className={`px-4 py-2 rounded border transition-colors ${activeOption === opt ? 'bg-[var(--accent)] text-black border-[var(--accent)]' : 'bg-[var(--ash-dark)] text-[var(--white-muted)] border-[var(--border)] hover:border-[var(--accent-dim)]'}`}
-              style={{ fontSize: '12px', fontWeight: 600, fontFamily: 'Poppins, sans-serif' }}
-            >
-              Option {opt}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="slide-shell noise">
+      <div className="watermark" style={{ color: 'rgba(68,214,44,0.012)' }}>TRANCHE</div>
 
-      <p style={{ fontSize: '14px', color: 'var(--white-muted)', marginBottom: '24px' }}>
-        Assume the investor will not release BDT 20 lakh at once. We recommend Option A as the primary structure unless the investor prefers tighter control.
-      </p>
+      <div className="slide-inner">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <span className="slide-label">Raise & Financials — 04</span>
+            <h2 className="slide-title">Tranche <span style={{ color: 'var(--accent)' }}>Plan.</span></h2>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', background: 'var(--ash-mid)', borderRadius: '10px', padding: '4px', border: '1px solid var(--border)' }}>
+            {['A', 'B', 'C'].map(o => (
+              <button key={o} onClick={() => setActive(o)} style={{ padding: '8px 18px', borderRadius: '7px', border: 'none', cursor: 'pointer', fontFamily: 'Poppins', fontSize: '12px', fontWeight: 600, background: active === o ? 'var(--accent)' : 'transparent', color: active === o ? 'var(--black)' : 'var(--white-muted)', transition: 'all 0.2s' }}>
+                Option {o}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      <div className="flex gap-8">
-        <div className="flex-1 flex flex-col gap-4">
-          <h3 style={{ fontSize: '18px', color: 'var(--white)', fontWeight: 600 }}>{options[activeOption].name}</h3>
-          
-          <div className="space-y-4">
-            {options[activeOption].tranches.map((tranche, i) => (
-              <div key={i} className="p-5 rounded-xl border relative" style={{ background: 'var(--ash-dark)', borderLeft: '4px solid var(--accent)', borderColor: 'var(--border)' }}>
-                <div className="flex justify-between items-start mb-3">
+        <p style={{ fontSize: '13px', color: 'var(--white-muted)', marginTop: '-8px' }}>Milestone-gated releases derisk the investor. We recommend Option A unless tighter control is preferred.</p>
+
+        <div style={{ display: 'flex', gap: '20px', flex: 1 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <h3 style={{ fontSize: '14px', color: 'var(--white)', fontWeight: 600 }}>{opt.label}</h3>
+            {opt.tranches.map((tr, i) => (
+              <div key={i} className="glass-panel" style={{ padding: '20px 22px', borderLeft: '4px solid var(--accent)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                   <div>
-                    <h4 style={{ fontSize: '14px', color: 'var(--white)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{tranche.title}</h4>
-                    <p style={{ fontSize: '13px', color: 'var(--accent)', marginTop: '4px', fontWeight: 500 }}>Trigger: {tranche.trigger}</p>
+                    <span style={{ fontSize: '12px', color: 'var(--white)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{tr.t}</span>
+                    <p style={{ fontSize: '12px', color: 'var(--accent)', marginTop: '3px', fontWeight: 500 }}>Trigger: {tr.trigger}</p>
                   </div>
-                  <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--white)', fontFamily: 'monospace' }}>
-                    {tranche.amount}
-                  </div>
+                  <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--white)', fontFamily: 'monospace' }}>{tr.amount}</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <div>
-                    <span style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>Funds Used For</span>
-                    <span style={{ fontSize: '13px', color: 'var(--white)' }}>{tranche.use}</span>
+                    <span style={{ fontSize: '10px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '2px' }}>Funds Used For</span>
+                    <span style={{ fontSize: '12px', color: 'var(--white)' }}>{tr.use}</span>
                   </div>
                   <div>
-                    <span style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>Risk Mitigation</span>
-                    <span style={{ fontSize: '13px', color: 'var(--white)' }}>{tranche.risk}</span>
+                    <span style={{ fontSize: '10px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '2px' }}>Risk Mitigation</span>
+                    <span style={{ fontSize: '12px', color: 'var(--white)' }}>{tr.risk}</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
 
-        <div className="w-[300px] p-6 rounded-xl border flex flex-col" style={{ background: 'var(--ash-dark)', borderColor: 'var(--border)' }}>
-          <h3 style={{ fontSize: '14px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '24px' }}>Expected Runway</h3>
-          
-          <div className="flex-1 flex flex-col justify-between">
-            <div className="relative pl-6 pb-6 border-l border-[var(--border)]">
-              <div className="absolute left-[-5px] top-0 w-[9px] h-[9px] rounded-full bg-[var(--accent)]" />
-              <h4 style={{ fontSize: '13px', color: 'var(--white)', fontWeight: 600 }}>Months 1–2</h4>
-              <p style={{ fontSize: '12px', color: 'var(--white-muted)', marginTop: '4px' }}>Setup, Launch & Initial Acquisition</p>
-            </div>
-            <div className="relative pl-6 pb-6 border-l border-[var(--border)]">
-              <div className="absolute left-[-5px] top-0 w-[9px] h-[9px] rounded-full bg-[var(--accent-dim)]" />
-              <h4 style={{ fontSize: '13px', color: 'var(--white)', fontWeight: 600 }}>Months 3–4</h4>
-              <p style={{ fontSize: '12px', color: 'var(--white-muted)', marginTop: '4px' }}>Traction Building & Tournament 1</p>
-            </div>
-            <div className="relative pl-6 pb-6 border-l border-[var(--border)]">
-              <div className="absolute left-[-5px] top-0 w-[9px] h-[9px] rounded-full bg-[var(--accent-dim)]" />
-              <h4 style={{ fontSize: '13px', color: 'var(--white)', fontWeight: 600 }}>Months 5–6</h4>
-              <p style={{ fontSize: '12px', color: 'var(--white-muted)', marginTop: '4px' }}>Hitting 40 Turfs, Stabilizing Velocity</p>
-            </div>
-            <div className="relative pl-6">
-              <div className="absolute left-[-5px] top-0 w-[9px] h-[9px] rounded-full bg-[var(--ash-light)]" />
-              <h4 style={{ fontSize: '13px', color: 'var(--white)', fontWeight: 600 }}>Months 7–12</h4>
-              <p style={{ fontSize: '12px', color: 'var(--white-muted)', marginTop: '4px' }}>Scale, Optimization & Reserve Buffer</p>
-            </div>
+          {/* Timeline */}
+          <div className="glass-panel" style={{ width: '260px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <h3 style={{ fontSize: '11px', color: 'var(--white-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px' }}>Expected Runway</h3>
+            {[
+              { period: 'Months 1–2', desc: 'Setup, Launch & Initial Acquisition' },
+              { period: 'Months 3–4', desc: 'Traction Building & Tournament 1' },
+              { period: 'Months 5–6', desc: 'Hitting 40 Turfs, Stable Velocity' },
+              { period: 'Months 7–12', desc: 'Scale, Optimise & Reserve Buffer' },
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', gap: '14px', paddingBottom: '18px', position: 'relative' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: i === 0 ? 'var(--accent)' : 'var(--border)', flexShrink: 0 }} />
+                  {i < 3 && <div style={{ width: '2px', flex: 1, background: 'var(--border)' }} />}
+                </div>
+                <div style={{ paddingBottom: '4px' }}>
+                  <p style={{ fontSize: '13px', color: 'var(--white)', fontWeight: 600 }}>{item.period}</p>
+                  <p style={{ fontSize: '12px', color: 'var(--white-muted)', marginTop: '2px' }}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
