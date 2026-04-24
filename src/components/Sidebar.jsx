@@ -26,7 +26,9 @@ const NAV_ITEMS = [
       { id: 15, label: 'Merch Expansion', icon: '👕' },
       { id: 16, label: 'Sources', icon: '📑' },
     ]
-  }
+  },
+  { id: 17, label: 'Investment Planning', icon: '📐' },
+  { id: 18, label: 'Burn & Growth', icon: '🔥' },
 ];
 
 export default function Sidebar({ current, onChange }) {

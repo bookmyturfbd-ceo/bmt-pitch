@@ -22,6 +22,8 @@ import BreakevenEngineSlide from './slides/financials/BreakevenEngineSlide';
 import TournamentEconomicsSlide from './slides/financials/TournamentEconomicsSlide';
 import MerchExpansionSlide from './slides/financials/MerchExpansionSlide';
 import SourcesSlide from './slides/financials/SourcesSlide';
+import InvestmentPlanningSlide from './slides/InvestmentPlanningSlide';
+import BurnGrowthSlide from './slides/BurnGrowthSlide';
 
 const SLIDES = [
   OverviewSlide,
@@ -41,6 +43,8 @@ const SLIDES = [
   TournamentEconomicsSlide,
   MerchExpansionSlide,
   SourcesSlide,
+  InvestmentPlanningSlide,
+  BurnGrowthSlide,
 ];
 
 // Slide transition variants — GPU-accelerated, no layout lag
