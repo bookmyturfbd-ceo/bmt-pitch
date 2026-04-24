@@ -24,6 +24,7 @@ import MerchExpansionSlide from './slides/financials/MerchExpansionSlide';
 import SourcesSlide from './slides/financials/SourcesSlide';
 import InvestmentPlanningSlide from './slides/InvestmentPlanningSlide';
 import BurnGrowthSlide from './slides/BurnGrowthSlide';
+import MerchSlide from './slides/MerchSlide';
 
 const SLIDES = [
   OverviewSlide,
@@ -45,6 +46,7 @@ const SLIDES = [
   SourcesSlide,
   InvestmentPlanningSlide,
   BurnGrowthSlide,
+  MerchSlide,
 ];
 
 // Slide transition variants — GPU-accelerated, no layout lag

@@ -28,7 +28,8 @@ const NAV_ITEMS = [
     ]
   },
   { id: 17, label: 'Investment Planning', icon: '📐' },
-  { id: 18, label: 'Burn & Growth', icon: '🔥' },
+  { id: 18, label: 'Burn & Growth',       icon: '🔥' },
+  { id: 19, label: 'FIFA Merch',          icon: '🏆' },
 ];
 
 export default function Sidebar({ current, onChange }) {

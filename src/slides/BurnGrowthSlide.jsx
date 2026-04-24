@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { T } from './burnGrowth/tokens.jsx';
 import OverviewSection from './burnGrowth/OverviewSection.jsx';
-import MerchSection from './burnGrowth/MerchSection.jsx';
 import AdStrategySection from './burnGrowth/AdStrategySection.jsx';
 import Burn6MSection from './burnGrowth/Burn6MSection.jsx';
 import Burn12MSection from './burnGrowth/Burn12MSection.jsx';
@@ -10,7 +9,6 @@ import SummarySection from './burnGrowth/SummarySection.jsx';
 
 const NAV_LINKS = [
   { id: 'overview',   label: 'Overview' },
-  { id: 'merch',      label: 'Merch 🏆' },
   { id: 'adstrategy', label: 'Ad Strategy' },
   { id: 'burn6m',     label: 'Burn: 6M' },
   { id: 'burn12m',    label: 'Burn: 12M' },
@@ -133,8 +131,6 @@ export default function BurnGrowthSlide() {
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto' }}>
           <OverviewSection />
-          <Divider />
-          <MerchSection />
           <Divider />
           <AdStrategySection />
           <Divider />
